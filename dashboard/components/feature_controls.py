@@ -12,7 +12,7 @@ def stepped_slider(label, key, min_value, max_value, value, step, decimals=0):
     if key not in st.session_state:
         st.session_state[key] = value
 
-    minus_col, slider_col, plus_col = st.columns([1, 9, 1], vertical_alignment="center")
+    minus_col, slider_col, plus_col = st.columns([1, 9, 1], gap="medium", vertical_alignment="center")
 
     with minus_col:
         st.button(

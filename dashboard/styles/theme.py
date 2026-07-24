@@ -61,7 +61,7 @@ def inject_theme():
     st.markdown(
         f"""
         <style>
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;800&family=Inter:wght@400;500;600;700;800&family=Dancing+Script:wght@500;600;700&display=swap');
 
         html, body {{
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -81,19 +81,68 @@ def inject_theme():
 
         #MainMenu, footer {{ visibility: hidden; }}
 
+        [data-testid="stHeader"] {{
+            height: 0;
+            min-height: 0;
+            visibility: hidden;
+        }}
+
         .stApp {{
             background: {BG_GRADIENT};
         }}
 
+        [data-testid="stMainBlockContainer"],
         [data-testid="block-container"] {{
-            padding-top: 2.5rem;
-            max-width: 1240px;
+            padding-top: 2rem;
+            padding-bottom: 3rem;
+            max-width: min(1600px, 94vw);
+            margin: 0 auto;
+        }}
+
+        /* Breathing room between stacked widgets (sliders, buttons, etc.) */
+        [data-testid="stVerticalBlock"] {{
+            gap: 1.15rem;
         }}
 
         /* ---------------- Cards ---------------- */
         [data-testid="stVerticalBlockBorderWrapper"] {{
             background: {SURFACE};
             border-radius: 20px;
+        }}
+
+        [data-testid="stVerticalBlockBorderWrapper"] > div > div {{
+            padding: 0.4rem 0.5rem;
+        }}
+
+        /* Left "Input features" panel: match the right panel's height and
+        vertically center its content instead of leaving it stuck to the top.
+        The column is a flex row item (stretched to the tallest sibling by
+        default) — this propagates that stretch down through the wrapper
+        chain so the bordered box itself actually fills it, then centers
+        its contents inside the extra space. */
+        div[data-testid="stColumn"]:has(.st-key-input_features_panel) {{
+            display: flex;
+            flex-direction: column;
+        }}
+
+        div[data-testid="stColumn"]:has(.st-key-input_features_panel) > div[data-testid="stVerticalBlock"],
+        div[data-testid="stColumn"]:has(.st-key-input_features_panel) [data-testid="stLayoutWrapper"] {{
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }}
+
+        .st-key-input_features_panel {{
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }}
+
+        /* Nudge the stepper "+" buttons closer to their sliders (only the
+        plus side — the minus side gap stays as-is). */
+        div[class*="st-key-"][class*="_plus"] {{
+            margin-left: -14px;
         }}
 
         /* ---------------- Headings ---------------- */
@@ -126,10 +175,12 @@ def inject_theme():
         }}
 
         .hero-subtitle {{
+            font-family: 'Dancing Script', cursive;
             color: {TEXT_SECONDARY};
-            font-size: 1.15rem;
+            font-size: 1.9rem;
             margin-top: 0.35rem;
-            font-weight: 500;
+            font-weight: 600;
+            letter-spacing: 0.01em;
         }}
 
         /* ---------------- Buttons ---------------- */

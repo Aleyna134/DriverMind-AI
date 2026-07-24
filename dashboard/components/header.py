@@ -1,31 +1,19 @@
+import base64
+from pathlib import Path
+
 import streamlit as st
 
-from styles.theme import GOOD, ACCENT
+LOGO_PATH = Path(__file__).resolve().parent.parent / "assets" / "logo.png"
+LOGO_B64 = base64.b64encode(LOGO_PATH.read_bytes()).decode()
 
 
 def render_header():
 
-    title_col, mode_col = st.columns([3, 1])
-
-    with title_col:
-        st.markdown(
-            '<div class="hero-title">Driver Risk Intelligence</div>',
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            '<div class="hero-subtitle">Real-time driver behaviour risk monitoring</div>',
-            unsafe_allow_html=True,
-        )
-
-    with mode_col:
-        mode = st.toggle("Simulation Mode", value=True)
-
-        dot_color = ACCENT if mode else GOOD
-        label = "Simulation" if mode else "Live"
-
-        st.markdown(
-            f'<div class="status-pill" style="margin-top:4px;"><span class="status-dot" style="background:{dot_color};"></span>{label} mode active</div>',
-            unsafe_allow_html=True,
-        )
-
-    return mode
+    st.markdown(
+        f'<div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">'
+        f'<img src="data:image/png;base64,{LOGO_B64}" style="width:96px; height:96px;" />'
+        f'<div class="hero-title">DriverMind AI</div>'
+        f'<div class="hero-subtitle" style="margin-top:0; margin-left:90px; align-self:center;">Real-time Driver Behaviour Risk Monitoring</div>'
+        f'</div>',
+        unsafe_allow_html=True,
+    )

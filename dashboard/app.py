@@ -16,11 +16,12 @@ from components.metrics import render_metrics
 from components.trend_chart import render_trend_chart
 from components.feature_controls import render_feature_controls
 from components.risk_factors import render_risk_factors
+from components.recommendation import render_recommendation
 from src.predictor import predict, build_row
 from src.config import SEQUENCE_LENGTH
 
 st.set_page_config(
-    page_title="Driver Risk Intelligence",
+    page_title="DriverMind AI",
     layout="wide",
 )
 
@@ -282,15 +283,13 @@ def current_features():
 
 
 # ---------------- Header ----------------
-mode = render_header()
-
-st.write("")
+render_header()
 
 # ---------------- Main Dashboard ----------------
-left_col, right_col = st.columns([1, 2], gap="medium")
+left_col, right_col = st.columns([1, 1.6], gap="large")
 
 with left_col:
-    with st.container(border=True):
+    with st.container(border=True, key="input_features_panel"):
         features = render_feature_controls()
 
 if features["start"]:
@@ -480,3 +479,13 @@ def live_panel():
 
 with right_col:
     live_panel()
+
+
+@st.fragment(run_every=0.2)
+def recommendation_panel():
+    with st.container(border=True):
+        render_recommendation(st.session_state["prediction"]["risk_factors"])
+
+
+st.write("")
+recommendation_panel()
