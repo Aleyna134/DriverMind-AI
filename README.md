@@ -1,5 +1,7 @@
 # DriverMind AI
 
+An intelligent driver monitoring and risk prediction system powered by deep learning.
+
 An LSTM-based driver behavior classifier (Normal / Drowsy / Aggressive) trained on the
 [UAH-DriveSet](http://www.robesafe.uah.es/personal/eduardo.romera/uah-driveset/), with a live
 Streamlit dashboard that feeds simulated sensor input directly into the model.
