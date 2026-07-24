@@ -1,0 +1,28 @@
+# Datasets are too large for git (raw video/sensor data, optical flow caches,
+# processed .npz feature dumps) - regenerate locally via the notebooks instead.
+datasets/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Local tool config / sync artifacts
+.claude/
+src/_sync_test.txt
