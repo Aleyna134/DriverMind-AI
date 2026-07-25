@@ -17,6 +17,7 @@ from components.trend_chart import render_trend_chart
 from components.feature_controls import render_feature_controls
 from components.risk_factors import render_risk_factors
 from components.recommendation import render_recommendation
+from components.sensor_summary import render_sensor_summary
 from src.predictor import predict, build_row
 from src.config import SEQUENCE_LENGTH
 
@@ -442,7 +443,7 @@ def live_panel():
             st.session_state["risk_history"].append(result["risk_score"])
             st.session_state["risk_history"] = st.session_state["risk_history"][-300:]
 
-    with st.container(border=True):
+    with st.container(border=True, key="monitoring_panel"):
 
         status_col, timer_col = st.columns([2, 1])
 
@@ -482,10 +483,13 @@ with right_col:
 
 
 @st.fragment(run_every=0.2)
-def recommendation_panel():
-    with st.container(border=True):
+def bottom_panels():
+    with st.container(border=True, key="recommendation_panel"):
         render_recommendation(st.session_state["prediction"]["risk_factors"])
+
+    st.write("")
+    render_sensor_summary(st.session_state["feature_history"])
 
 
 st.write("")
-recommendation_panel()
+bottom_panels()

@@ -94,7 +94,7 @@ def render_recommendation(risk_factors):
         color = factor_color(factor) if factor != "Lane Drift" else WARNING
 
     st.markdown(
-        '<div class="section-heading">Driving recommendation</div>',
+        '<div class="section-heading">Driving Recommendation</div>',
         unsafe_allow_html=True,
     )
 

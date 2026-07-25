@@ -145,6 +145,23 @@ def inject_theme():
             margin-left: -14px;
         }}
 
+        /* "Driving Recommendation" panel: taller, with extra bottom padding
+        so the icon/text row doesn't sit flush against the card's edge —
+        same padding scale as the stat cards elsewhere on the dashboard. */
+        .st-key-recommendation_panel {{
+            min-height: 190px;
+            padding: 1.5rem 1.5rem 2.25rem;
+            box-sizing: border-box;
+        }}
+
+        /* Right "monitoring" panel: the risk-factor chips at the bottom
+        were sitting flush against the card edge — give it the same
+        extra bottom breathing room as the recommendation panel. */
+        .st-key-monitoring_panel {{
+            padding-bottom: 2.25rem;
+            box-sizing: border-box;
+        }}
+
         /* ---------------- Headings ---------------- */
         h1, h2, h3, h4 {{
             font-weight: 700;
