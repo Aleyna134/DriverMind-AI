@@ -432,8 +432,11 @@ def live_panel():
                 # Ham modelin (artık gösterilmeyen) "Drowsy" güveni burada
                 # kalıp göstergeyi yeni etiketle çelişir hale getirmesin —
                 # gösterilen sayı, kararı gerçekten verdiğimiz risk_score
-                # ile birebir uyumlu olsun.
-                result["confidence"] = float(result["risk_score"])
+                # ile birebir uyumlu olsun. (Normal için güven seviyesi riskin tersidir)
+                if result["prediction"] == "Normal":
+                    result["confidence"] = 100.0 - float(result["risk_score"])
+                else:
+                    result["confidence"] = float(result["risk_score"])
 
             if progress >= 1.0:
                 result["risk_factors"] = ["Sürekli güvenli sürüş"]
