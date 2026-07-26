@@ -51,6 +51,27 @@ drift) on top of the raw softmax output so the displayed risk score, class label
 chips never contradict each other.
 
 ## Results
+### Model Evolution & Selection
+
+The development process transitioned through three main phases to identify the optimal architecture:
+
+1. **Classical Machine Learning Baselines (Notebooks 10–44)**
+   - **Approach**: Extracted hand-crafted statistical features (mean, std, min, max, linear trends) over sliding windows.
+   - **Models**: Evaluated Random Forest, LightGBM, and XGBoost using GroupKFold (trip-level) splits to prevent driver leakage.
+   - **Result**: A tuned **XGBoost** model achieved **77.10% accuracy** (optimized with a 0.15 probability threshold, up from a **70.04%** baseline in Notebook 44). While competitive, classical models were limited because flattening windows into statistical aggregates threw away the temporal order of sensor signals (vital for identifying transitions, like a slow drowsy drift vs. an aggressive jerk).
+
+2. **Sequence Modeling with LSTMs (Notebooks 45–49, 61–73)**
+   - **Approach**: Fed raw sequence windows (timesteps $\times$ features) directly into stacked LSTMs to automatically learn time-series patterns.
+   - **Window Size Sweep**: Evaluated sequence lengths to find the best balance of temporal context:
+     - Window size 80 (Notebooks 67–68): Accuracy ~70.0%
+     - Window size 120 (Notebook 66): Accuracy ~70.56% 
+     - Window size 160 (Notebooks 69–70): **72.87% accuracy (Macro F1 0.7358)**
+     - Window size 200 (Notebooks 71–72): Accuracy ~71.0%
+   - **Selection**: The **160-timestep window** (representing 16 seconds of driving context at 10Hz) yielded the highest validation accuracy and was selected for the final deployment.
+
+3. **Multimodal Video & Optical Flow (Notebooks 50–60, 64–65)**
+   - **Approach**: Explored dashcam video frame embeddings (ResNet50) and dense Optical Flow CNN-LSTMs to augment sensors.
+   - **Result**: Suffered from extreme overfitting (validation accuracy drop to 20–38%) due to the high dimensionality of video embeddings relative to the limited number of independent driving trips (~40). This confirmed that a sensor-only LSTM was the most robust and generalizable architecture.
 
 ### Final Model Performance
 
@@ -103,15 +124,18 @@ pip install -r requirements.txt   # streamlit, torch, numpy, pandas, altair, sci
 ```
 
 `datasets/` is excluded from this repository (raw UAH-DriveSet recordings, optical-flow caches,
-and processed `.npz` feature dumps total several hundred GB). To regenerate it:
+and processed `.npz` feature dumps total several hundred GB). 
 
-1. Download the [UAH-DriveSet](http://www.robesafe.uah.es/personal/eduardo.romera/uah-driveset/)
-   and place it under `datasets/raw/UAH-DRIVESET-v1/`.
-2. Run the notebooks in order (00 → 74) to rebuild `datasets/processed/`, including
-   `feature_defaults.json` and `lstm_feature_scaler.pkl`, which the dashboard depends on.
+The pretrained checkpoint in `models/` and precomputed scaler/default configuration files are already tracked in git, so **the dashboard runs out of the box** without regenerating the dataset. 
 
-The pretrained checkpoint in `models/` is tracked in git, so the dashboard runs without
-regenerating the dataset.
+However, if you want to rebuild the processed data and retrain the model from scratch:
+
+1. Download the [UAH-DriveSet](http://www.robesafe.uah.es/personal/eduardo.romera/uah-driveset/) and place it under `datasets/raw/UAH-DRIVESET-v1/`.
+2. Instead of running all 75 exploratory/research notebooks, you only need to run the following core notebooks in order to rebuild the production pipeline:
+   - **`69_UAH_Window_Size_160_Dataset.ipynb`**: Generates the 160-timestep windowed sequences (`uah_dataset_window160.npz`).
+   - **`73_UAH_LSTM_Feature_Importance.ipynb`**: Retrains the final LSTM model (`lstm_window160_dropout02_macrof1_07358.pth`). *(Note: Save the fitted scaler and feature defaults here if they are deleted).*
+   - **`74_UAH_Simulation_Analysis.ipynb`**: Precomputes the simulation vectors (`simulation_vectors.npy`, `simulation_vectors_scaled.npy`) and simulation scaler (`simulation_scaler.pkl`) required for the Streamlit dashboard simulation.
+
 
 ## Usage
 
